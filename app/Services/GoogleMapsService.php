@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log as FacadesLog;
 
 class GoogleMapsService
 {
@@ -24,11 +25,22 @@ class GoogleMapsService
     ]);
 
     $data = $response->json();
+    // Log para debug
+    FacadesLog::info('Google Maps Geocode Response', [
+      'address' => $address,
+      'status'  => $data['status'] ?? 'NO_STATUS',
+      'results' => $data['results'][0]['geometry']['location'] ?? null,
+    ]);
 
-    if (!empty($data['results'][0]['geometry']['location'])) {
+    if (($data['status'] ?? null) === 'OK' && !empty($data['results'][0]['geometry']['location'])) {
       return $data['results'][0]['geometry']['location'];
     }
 
-    return [];
+    // Retorna erro amigável
+    return [
+      'lat' => null,
+      'lng' => null,
+      'error' => $data['status'] ?? 'UNKNOWN_ERROR'
+    ];
   }
 }

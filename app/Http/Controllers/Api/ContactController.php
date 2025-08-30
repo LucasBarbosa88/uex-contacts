@@ -35,6 +35,7 @@ class ContactController extends Controller
       'user_id' => $request->user()->id,
       'name' => $data['name'],
       'cpf' => preg_replace('/\D/', '', $data['cpf']),
+      'email' => $data['email'],
       'phone' => $data['phone'] ?? null,
     ]);
 
@@ -49,6 +50,34 @@ class ContactController extends Controller
     ]);
 
     return response()->json($contact->load('address'), 201);
+  }
+
+  public function show(Contact $contact)
+  {
+    $this->authorize('view', $contact);
+    return response()->json($contact->load('address'));
+  }
+
+  public function update(UpdateContactRequest $request, Contact $contact, GoogleMapsService $gmaps)
+  {
+    $data = $request->validated();
+    $contact->update([
+      'name' => $data['name'],
+      'cpf' => preg_replace('/\D/', '', $data['cpf']),
+      'phone' => $data['phone'] ?? null,
+    ]);
+
+    $addr = $data['address'];
+    $fullAddress = "{$addr['street']}, {$addr['number']}, {$addr['city']} - {$addr['state']}, {$addr['zip']}";
+    $geo = $gmaps->geocodeAddress($fullAddress);
+
+    $contact->address()->update([
+      ...$addr,
+      'latitude' => $geo['lat'] ?? null,
+      'longitude' => $geo['lng'] ?? null,
+    ]);
+
+    return response()->json($contact->load('address'));
   }
 
   public function destroy(Contact $contact)

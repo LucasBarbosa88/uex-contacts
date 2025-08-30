@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\ValidDocument;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use App\Rules\ValidCpf;
 
-class StoreContactRequest extends FormRequest
+class UpdateContactRequest extends FormRequest
 {
   public function authorize()
   {
@@ -15,20 +15,19 @@ class StoreContactRequest extends FormRequest
 
   public function rules()
   {
-    $userId = auth()->id();
+    $userId = auth()->user()->id;
+    $contactId = $this->route('contact')->id;
 
     return [
       'name' => 'required|string|max:255',
-      'email' => 'required|email|unique:contacts',
       'cpf' => [
         'required',
         'string',
-        new ValidDocument(),
-        Rule::unique('contacts')->where(fn($q) => $q->where('user_id', $userId))
+        new ValidCpf(),
+        Rule::unique('contacts')->where(fn($q) => $q->where('user_id', $userId))->ignore($contactId)
       ],
       'phone' => 'nullable|string|max:30',
 
-      // address fields
       'address.street' => 'required|string|max:255',
       'address.number' => 'nullable|string|max:20',
       'address.complement' => 'nullable|string|max:255',
@@ -36,17 +35,6 @@ class StoreContactRequest extends FormRequest
       'address.city' => 'required|string|max:255',
       'address.state' => 'required|string|size:2',
       'address.zip' => 'required|string|max:9',
-    ];
-  }
-
-  public function messages()
-  {
-    return [
-      'cpf.unique' => 'Este CPF já está cadastrado para outro contato.',
-      'address.street.required' => 'O campo logradouro é obrigatório.',
-      'address.city.required' => 'O campo cidade é obrigatório.',
-      'address.state.required' => 'O campo UF é obrigatório.',
-      'address.zip.required' => 'O campo CEP é obrigatório.',
     ];
   }
 }
