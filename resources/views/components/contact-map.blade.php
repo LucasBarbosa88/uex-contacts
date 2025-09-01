@@ -9,5 +9,5 @@
   <div id="contact-map" style="width: 70%; height: 500px;"></div>
 </div>
 
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB1z0-jYDddHfuEop3QDOr_HmEFvZNlhPQ&callback=initMap" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=GOOGLE_API_KEY&callback=initMap" async defer></script>
 <script src="{{ asset('js/contact-map.js') }}"></script>
