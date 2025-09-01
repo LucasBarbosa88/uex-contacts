@@ -1,8 +1,8 @@
-UEX Contatos
+# UEX Contatos
 
 Sistema de cadastro de contatos com Laravel, integração Via CEP e Google Maps.
 
-Requisitos
+# Requisitos
 
 PHP 8.4+
 
@@ -12,8 +12,8 @@ MySQL ou outro banco de dados compatível
 
 Chave de API do Google Maps
 
-Instalação
-# Clonar o repositório
+# Instalação
+Clonar o repositório
 git clone https://github.com/seu-usuario/uex-contacts.git
 cd uex-contacts
 
