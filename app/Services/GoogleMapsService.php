@@ -14,9 +14,6 @@ class GoogleMapsService
     $this->apiKey = config('services.google_maps.key');
   }
 
-  /**
-   * Recebe endereço completo e retorna latitude e longitude
-   */
   public function geocodeAddress(string $address): array
   {
     $response = Http::get('https://maps.googleapis.com/maps/api/geocode/json', [
@@ -25,7 +22,7 @@ class GoogleMapsService
     ]);
 
     $data = $response->json();
-    // Log para debug
+
     FacadesLog::info('Google Maps Geocode Response', [
       'address' => $address,
       'status'  => $data['status'] ?? 'NO_STATUS',
@@ -36,7 +33,6 @@ class GoogleMapsService
       return $data['results'][0]['geometry']['location'];
     }
 
-    // Retorna erro amigável
     return [
       'lat' => null,
       'lng' => null,
